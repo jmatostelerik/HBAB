@@ -17,12 +17,8 @@
 
 	<script src="lib/jquery-1.10.2.min.js"></script>
 	<script src="lib/d3.v3.js"></script>
+	<script src="scripts/FakeNetworkRepository.js"></script>
 	<script>
-
-
-
-		var data,
-			filtered;
 
 		var width = 960,
 			height = 500;
@@ -48,33 +44,26 @@
 			.attr("width", width)
 			.attr("height", height);
 
-
-
-
 		$(document).ready(function(){
+			var graphData = {};
 			$("#rangeFilter").on("change", function(e){
 				var threshold = $(e.target).val();
 
-				var filteredLocal = $.extend({}, data);
-
-				filteredLocal.nodes.map(function(node){
-					return node.weight > threshold;
-				})
-
-				// update the graphs model with filtered data
-				filtered = filteredLocal;
+				redrawGraph({
+					nodes: graphData.nodes.map(function(node){
+						return node.weight > threshold;
+					}),
+					links: graphData.links,
+				});
 			});
 
-			$.get("data/hackathonWithLinks.json", function(d){
-				data = filtered = d;
-				drawGraph(filtered);
+			NetworkRepository.CallWithNetworkData({}, function(error, graph) {
+				graphData = graph
+				initGraph(graph);
 			});
 		});
 
-
-
-
-		function drawGraph(graph){
+		function initGraph(graph){
 			force
 				.nodes(graph.nodes)
 				.links(graph.links)
