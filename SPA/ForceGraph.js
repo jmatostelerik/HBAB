@@ -38,15 +38,17 @@ ForceGraph.prototype = {
 			.links(this.model.links)
 			.start();
 
+		this.updateGraph();
+	},
 
+	updateGraph: function(){
 		var link = this.svg.selectAll(".link").data(this.model.links);
 
 		link.enter().append("line")
 			.attr("class", "link")
 			.style("stroke-width", function(d) { return Math.sqrt(d.weight); });
 
-		link.exit().remove();
-
+		link.exit().transition().remove();
 
 		var node = this.svg.selectAll(".node").data(this.model.nodes);
 
@@ -60,9 +62,7 @@ ForceGraph.prototype = {
 		node.append("title")
 			.text(function(d) { return d.name; });
 
-		node.exit().remove();
-
-
+		node.exit().transition().remove();
 
 		this.force.on("tick", function() {
 			link.attr("x1", function(d) { return d.source.x; })
@@ -73,5 +73,10 @@ ForceGraph.prototype = {
 			node.attr("cx", function(d) { return d.x; })
 				.attr("cy", function(d) { return d.y; });
 		});
+	},
+
+	removeRandomNodes: function(){
+		this.model.nodes = this.model.nodes.slice(0, Math.ceil(Math.random()*this.model.nodes.length));
+		this.updateGraph();
 	}
 };
