@@ -1,27 +1,12 @@
-var randIntUpTo = function(n) {
-	return  Math.floor(Math.random() * n);
-};
-
-var randUpToNexceptFor = function (n, excludedNumber) {
-	var result = randIntUpTo(n - 1);
-	if (result >= excludedNumber) {
-		result++;
-	}
-
-	return result;
-};
-
-var randFrom = function (list) {
-	return list[randIntUpTo(list.length)];
-};
+var random = require('./randomUtils');
 
 var nonDegenerateLink = function (list, categories) {
-	var sourceIndex = randIntUpTo(list.length);
+	var sourceIndex = random.intUpTo(list.length);
 
 	return {
 		from: sourceIndex,
-		to: randUpToNexceptFor(list.length, sourceIndex),
-		topic: randFrom(categories)
+		to: random.intUpToNexceptFor(list.length, sourceIndex),
+		topic: random.from(categories)
 	};
 };
 
