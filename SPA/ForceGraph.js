@@ -38,45 +38,71 @@ ForceGraph.prototype = {
 			.links(this.model.links)
 			.start();
 
-		this.updateGraph();
+		this.refresh();
 	},
 
-	updateGraph: function(){
-		var link = this.svg.selectAll(".link").data(this.model.links);
+	refresh: function(){
 
-		link.enter().append("line")
+		this.link = this.svg.selectAll(".link").data(this.model.links);
+		this.node = this.svg.selectAll(".node").data(this.model.nodes);
+
+
+		// add new links
+		this.link.enter().append("line")
 			.attr("class", "link")
 			.style("stroke-width", function(d) { return Math.sqrt(d.weight); });
 
-		link.exit().transition().remove();
+		// update existing links
+		this.link
+			.style("stroke-width", function(d) { return Math.sqrt(d.weight); });
 
-		var node = this.svg.selectAll(".node").data(this.model.nodes);
+		// deal with removed links
+		this.link.exit().transition().remove();
 
-		node.enter().append("circle")
+
+		this.node.enter().append("circle")
 			.attr("class", "node")
-			.attr("r", 5)
+			.attr("r", 9)
 			.style("fill", function(d) { return color(d.team); })
 			.call(this.force.drag);
 
 		// TODO - nice styled popup?
-		node.append("title")
+		this.node.append("title")
 			.text(function(d) { return d.name; });
 
-		node.exit().transition().remove();
+		this.node.exit().remove();
+
 
 		this.force.on("tick", function() {
-			link.attr("x1", function(d) { return d.source.x; })
+			this.link.attr("x1", function(d) { return d.source.x; })
 				.attr("y1", function(d) { return d.source.y; })
 				.attr("x2", function(d) { return d.target.x; })
 				.attr("y2", function(d) { return d.target.y; });
 
-			node.attr("cx", function(d) { return d.x; })
+			this.node.attr("cx", function(d) { return d.x; })
 				.attr("cy", function(d) { return d.y; });
-		});
+		}.bind(this));
+
 	},
 
-	removeRandomNodes: function(){
-		this.model.nodes = this.model.nodes.slice(0, Math.ceil(Math.random()*this.model.nodes.length));
-		this.updateGraph();
+	showRole: function(role){
+		// this.model.nodes = this.model.nodes.slice(0, Math.ceil(Math.random()*this.model.nodes.length));
+		// this.removeDeadLinks();
+		this.model.nodes = this.model.nodes.filter(function(d){
+			if(d.role !== role){
+				d.visible = false;
+			} else {
+				d.visible = true;
+				return true;
+			}
+		});
+		this.removeDeadLinks();
+		this.refresh();
+	},
+
+	removeDeadLinks: function(){
+		this.model.links = this.model.links.filter(function(link){
+			return link.source.visible && link.target.visible;
+		});
 	}
 };

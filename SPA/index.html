@@ -12,8 +12,9 @@
 </head>
 <body>
 
-	Threshold:
-	<input type="range" id="rangeFilter" min="0" max="50">
+	<button data-role="Business">Show Only "Business"</button>
+	<button data-role="Engineering">Show Only "Engineering"</button>
+	<button data-role="Design">Show Only "Design"</button>
 
 	<script src="lib/jquery-1.10.2.min.js"></script>
 	<script src="lib/d3.v3.js"></script>
@@ -25,6 +26,12 @@
 
 		NetworkRepository.CallWithNetworkData({}, function(error, graph) {
 			forceGraph = new ForceGraph(graph, "body", 500, 500);
+		});
+
+		$(document).ready(function(){
+			$("button").on("click", function(e){
+				forceGraph.showRole($(e.target).attr("data-role"));
+			});
 		});
 
 	</script>
