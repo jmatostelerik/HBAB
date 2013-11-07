@@ -59,7 +59,6 @@ ForceGraph.prototype = {
 		this.link = this.svg.selectAll(".link").data(model.links);
 		this.node = this.svg.selectAll(".node").data(model.nodes);
 
-
 		// add new links
 		this.link.enter().append("line")
 			.attr("class", "link")
@@ -70,8 +69,7 @@ ForceGraph.prototype = {
 			.style("stroke-width", function(d) { return Math.sqrt(d.weight); });
 
 		// deal with removed links
-		this.link.exit().transition().remove();
-
+		
 
 		this.node.enter().append("circle")
 			.attr("class", "node")
@@ -83,11 +81,8 @@ ForceGraph.prototype = {
 		this.node.append("title")
 			.text(function(d) { return d.name; });
 
-		this.node.exit().remove();
-
-
-
-
+		this.link.exit().transition().style("opacity", 0).remove();
+		this.node.exit().transition().style("opacity", 0).remove();
 	},
 
 	showRole: function(role){
