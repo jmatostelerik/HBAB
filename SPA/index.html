@@ -13,7 +13,7 @@
 <body>
 
 	Threshold:
-	<input type="range" id="rangeFilter" min="0" max="5">
+	<input type="range" id="rangeFilter" min="0" max="50">
 
 	<script src="lib/jquery-1.10.2.min.js"></script>
 	<script src="lib/d3.v3.js"></script>
@@ -21,14 +21,15 @@
 
 
 
-		var data;
+		var data,
+			filtered;
 
 		var width = 960,
 			height = 500;
 
-		var strengthFunc = d3.scale.linear()
-			.domain([0, 8]);
-		var distanceFunc = d3.scale.linear()
+		var strengthScale = d3.scale.linear()
+			.domain([0, 15]);
+		var distanceScale = d3.scale.linear()
 			.domain([20, 50]);
 
 		var color = d3.scale.category20();
@@ -36,10 +37,10 @@
 		var force = d3.layout.force()
 			.charge(-120)
 			.linkDistance(function(l){
-				return distanceFunc(l.weight) * 200;
+				return distanceScale(l.weight) * 200;
 			})
 			.linkStrength(function(l){
-				return strengthFunc(l.weight) * .5;
+				return strengthScale(l.weight) * .5;
 			})
 			.size([width, height]);
 
@@ -50,47 +51,60 @@
 
 
 
-
-
-
 		$(document).ready(function(){
 			$("#rangeFilter").on("change", function(e){
-				// filter the data to remove links
-				var d = data;
-				redrawGraph(d);
+				var threshold = $(e.target).val();
+
+				var filteredLocal = $.extend({}, data);
+
+				filteredLocal.nodes.map(function(node){
+					return node.weight > threshold;
+				})
+
+				// update the graphs model with filtered data
+				filtered = filteredLocal;
 			});
 
 			$.get("data/hackathonWithLinks.json", function(d){
-				data = d;
-				initGraph(data);
+				data = filtered = d;
+				drawGraph(filtered);
 			});
 		});
 
 
 
 
-		function initGraph(graph){
+		function drawGraph(graph){
 			force
 				.nodes(graph.nodes)
 				.links(graph.links)
 				.start();
 
-			var link = svg.selectAll(".link")
-				.data(graph.links)
-				.enter().append("line")
+
+			var link = svg.selectAll(".link").data(graph.links)
+
+			link.enter().append("line")
 				.attr("class", "link")
 				.style("stroke-width", function(d) { return Math.sqrt(d.weight); });
 
-			var node = svg.selectAll(".node")
-				.data(graph.nodes)
-				.enter().append("circle")
+			link.exit().remove();
+
+
+			var node = svg.selectAll(".node").data(graph.nodes)
+
+			node.enter().append("circle")
 				.attr("class", "node")
 				.attr("r", 5)
 				.style("fill", function(d) { return color(d.team); })
 				.call(force.drag);
 
+			// TODO - nice styled popup?
 			node.append("title")
 				.text(function(d) { return d.name; });
+
+			node.exit().remove();
+
+
 
 			force.on("tick", function() {
 				link.attr("x1", function(d) { return d.source.x; })
@@ -104,13 +118,13 @@
 		}
 
 		function redrawGraph(graph){
-			var link = svg.selectAll(".link")
+			svg.selectAll(".link")
 				.data(graph.links)
 				.enter().append("line")
 				.attr("class", "link")
 				.style("stroke-width", function(d) { return d.value; });
 
-			var node = svg.selectAll(".node")
+			svg.selectAll(".node")
 				.data(graph.nodes)
 				.enter().append("circle")
 				.attr("class", "node")

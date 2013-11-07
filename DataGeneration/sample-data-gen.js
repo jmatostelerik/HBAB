@@ -38,7 +38,7 @@ for (var fromIndex = 0; fromIndex < numPeople; fromIndex++) {
 				source: fromIndex,
 				target: toIndex,
 				weight: 2
-			})
+			});
 		}
 	}
 }
