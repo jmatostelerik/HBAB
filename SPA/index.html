@@ -12,37 +12,68 @@
 </head>
 <body>
 
-	Group:
-	<select>
-		<option>test</option>
-	</select>
-
 	Threshold:
-	<select>
-		<option>test</option>
-	</select>
+	<input type="range" id="rangeFilter" min="0" max="5">
 
+	<script src="lib/jquery-1.10.2.min.js"></script>
 	<script src="lib/d3.v3.min.js"></script>
 	<script>
+
+
+
+		var data;
+
 		var width = 960,
 			height = 500;
+
+		var strengthFunc = d3.scale.linear()
+			.domain([0, 8]);
+		var distanceFunc = d3.scale.linear()
+			.domain([20, 50]);
 
 		var color = d3.scale.category20();
 
 		var force = d3.layout.force()
 			.charge(-120)
-			.linkDistance(30)
+			.linkDistance(function(l){
+				return distanceFunc(l.weight) * 200;
+			})
+			.linkStrength(function(l){
+				return strengthFunc(l.weight) * .5;
+			})
 			.size([width, height]);
 
 		var svg = d3.select("body").append("svg")
 			.attr("width", width)
 			.attr("height", height);
 
-		d3.json("data/hackathonWithLinks.json", function(error, graph) {
-				force
-					.nodes(graph.nodes)
-					.links(graph.links)
-					.start();
+
+
+
+
+
+
+		$(document).ready(function(){
+			$("#rangeFilter").on("change", function(e){
+				// filter the data to remove links
+				var d = data;
+				redrawGraph(d);
+			});
+
+			$.get("data/hackathonWithLinks.json", function(d){
+				data = d;
+				initGraph(data);
+			});
+		});
+
+
+
+
+		function initGraph(graph){
+			force
+				.nodes(graph.nodes)
+				.links(graph.links)
+				.start();
 
 			var link = svg.selectAll(".link")
 				.data(graph.links)
@@ -70,7 +101,25 @@
 				node.attr("cx", function(d) { return d.x; })
 					.attr("cy", function(d) { return d.y; });
 			});
-		});
+		}
+
+		function redrawGraph(graph){
+			var link = svg.selectAll(".link")
+				.data(graph.links)
+				.enter().append("line")
+				.attr("class", "link")
+				.style("stroke-width", function(d) { return d.value; });
+
+			var node = svg.selectAll(".node")
+				.data(graph.nodes)
+				.enter().append("circle")
+				.attr("class", "node")
+				.attr("r", 5)
+				.style("fill", function(d) { return color(d.group); })
+				.call(force.drag);
+		}
+
+
 	</script>
 </body>
 </html>
