@@ -44,7 +44,10 @@
 					people = rawPeople.map(function (person) {
 						return {
 							name: person.Name,
-							team: person.TeamNumber
+							team: person.TeamNumber,
+							location: person.Location,
+							role: person.Skill,
+							email: person.Email
 						};
 					});
 
