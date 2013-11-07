@@ -12,12 +12,8 @@ var nonDegenerateLink = function (list) {
 };
 
 var avgLinksPerPerson = 1;
-
-// var topics = [
-// 	".NET",
-// 	"JavaScript",
-// 	"HR question"
-// ];
+var numSuperStars = 4;
+var starPower = 8;
 
 var links = [];
 
@@ -41,9 +37,22 @@ for (var fromIndex = 0; fromIndex < numPeople; fromIndex++) {
 			links.push({
 				source: fromIndex,
 				target: toIndex,
-				weight: 3
+				weight: 2
 			})
 		}
+	}
+}
+
+for (var i = 0; i < numSuperStars; i++)
+{
+	var starIndex = random.intUpTo(numPeople);
+	for (var j = 0; j < starPower; j++)
+	{
+		links.push({
+			source: starIndex,
+			target: random.intUpToNexceptFor(numPeople, starIndex),
+			weight: random.intUpTo(8)
+		})
 	}
 }
 
