@@ -21,13 +21,10 @@
 	<script src="scripts/FakeNetworkRepository.js"></script>
 	<script>
 
-		var model ={};
-			forceGraph = new ForceGraph(model);
+		var forceGraph;
 
 		NetworkRepository.CallWithNetworkData({}, function(error, graph) {
-			model = graph;
-			forceGraph = new ForceGraph(model);
-			forceGraph.initGraph("body", 500, 500);
+			forceGraph = new ForceGraph(graph, "body", 500, 500);
 		});
 
 	</script>

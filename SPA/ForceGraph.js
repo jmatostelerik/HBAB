@@ -1,5 +1,6 @@
-function ForceGraph(model){
+function ForceGraph(model, selector, width, height){
 	this.model = model;
+	this.initGraph(selector, width, height);
 }
 
 var strengthScale = d3.scale.linear().domain([0, 15]);
