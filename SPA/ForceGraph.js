@@ -1,5 +1,5 @@
 function ForceGraph(model, selector, width, height){
-	this.model = this.pristine = model;
+	this._model = model;
 	this.initGraph(selector, width, height);
 }
 
@@ -18,7 +18,7 @@ ForceGraph.prototype = {
 	},
 
 	cloneModel: function(){
-		return $.extend(this.model);
+		return $.extend(this._model);
 	},
 
 	initGraph: function(selector, width, height){
@@ -38,9 +38,18 @@ ForceGraph.prototype = {
 			.attr("height", this.height);
 
 		this.force
-			.nodes(this.model.nodes)
-			.links(this.model.links)
-			.start();
+			.nodes(this._model.nodes)
+			.links(this._model.links)
+			.start()
+			.on("tick", function() {
+				this.link.attr("x1", function(d) { return d.source.x; })
+					.attr("y1", function(d) { return d.source.y; })
+					.attr("x2", function(d) { return d.target.x; })
+					.attr("y2", function(d) { return d.target.y; });
+
+				this.node.attr("cx", function(d) { return d.x; })
+					.attr("cy", function(d) { return d.y; });
+			}.bind(this));
 
 		this.refresh(this.cloneModel());
 	},
@@ -77,15 +86,7 @@ ForceGraph.prototype = {
 		this.node.exit().remove();
 
 
-		this.force.on("tick", function() {
-			this.link.attr("x1", function(d) { return d.source.x; })
-				.attr("y1", function(d) { return d.source.y; })
-				.attr("x2", function(d) { return d.target.x; })
-				.attr("y2", function(d) { return d.target.y; });
 
-			this.node.attr("cx", function(d) { return d.x; })
-				.attr("cy", function(d) { return d.y; });
-		}.bind(this));
 
 	},
 
@@ -101,6 +102,7 @@ ForceGraph.prototype = {
 			}
 		});
 		model = this.removeDeadLinks(model);
+		// TODO - make sure refresh isnt called before removeDeadLinks Finishes
 		this.refresh(model);
 	},
 
