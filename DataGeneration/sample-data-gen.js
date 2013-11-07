@@ -7,7 +7,7 @@ var nonDegenerateLink = function (list) {
 	return {
 		source: sourceIndex,
 		target: random.intUpToNexceptFor(list.length, sourceIndex),
-		value: random.intUpTo(3) + random.intUpTo(4)
+		weight: random.intUpTo(3) + random.intUpTo(4)
 	};
 };
 
@@ -29,7 +29,7 @@ console.log(JSON.stringify({
 	nodes: people.map(function (person) {
 		return {
 			name: person.Name,
-			group: person.TeamNumber
+			team: person.TeamNumber
 		};
 	}),
 	links: links
