@@ -50,7 +50,7 @@
 				var threshold = $(e.target).val();
 
 				redrawGraph({
-					nodes: graphData.nodes.map(function(node){
+					nodes: graphData.nodes.filter(function(node){
 						return node.weight > threshold;
 					}),
 					links: graphData.links,
