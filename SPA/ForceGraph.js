@@ -1,5 +1,5 @@
 function ForceGraph(model, selector, width, height){
-	this.model = model;
+	this.model = this.pristine = model;
 	this.initGraph(selector, width, height);
 }
 
@@ -15,6 +15,10 @@ ForceGraph.prototype = {
 	},
 	linkStrength: function(l){
 		return strengthScale(l.weight) * 0.5;
+	},
+
+	cloneModel: function(){
+		return $.extend(this.model);
 	},
 
 	initGraph: function(selector, width, height){
@@ -38,13 +42,13 @@ ForceGraph.prototype = {
 			.links(this.model.links)
 			.start();
 
-		this.refresh();
+		this.refresh(this.cloneModel());
 	},
 
-	refresh: function(){
+	refresh: function(model){
 
-		this.link = this.svg.selectAll(".link").data(this.model.links);
-		this.node = this.svg.selectAll(".node").data(this.model.nodes);
+		this.link = this.svg.selectAll(".link").data(model.links);
+		this.node = this.svg.selectAll(".node").data(model.nodes);
 
 
 		// add new links
@@ -86,9 +90,9 @@ ForceGraph.prototype = {
 	},
 
 	showRole: function(role){
-		// this.model.nodes = this.model.nodes.slice(0, Math.ceil(Math.random()*this.model.nodes.length));
-		// this.removeDeadLinks();
-		this.model.nodes = this.model.nodes.filter(function(d){
+		var model = this.cloneModel();
+
+		model.nodes = model.nodes.filter(function(d){
 			if(d.role !== role){
 				d.visible = false;
 			} else {
@@ -96,13 +100,14 @@ ForceGraph.prototype = {
 				return true;
 			}
 		});
-		this.removeDeadLinks();
-		this.refresh();
+		model = this.removeDeadLinks(model);
+		this.refresh(model);
 	},
 
-	removeDeadLinks: function(){
-		this.model.links = this.model.links.filter(function(link){
+	removeDeadLinks: function(model){
+		model.links = model.links.filter(function(link){
 			return link.source.visible && link.target.visible;
 		});
+		return model;
 	}
 };
