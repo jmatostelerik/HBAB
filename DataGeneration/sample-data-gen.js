@@ -26,6 +26,11 @@ for (var i = people.length * avgLinksPerPerson; i > 0; i--) {
 }
 
 console.log(JSON.stringify({
-	nodes: people,
+	nodes: people.map(function (person) {
+		return {
+			name: person.Name,
+			group: person.TeamNumber
+		};
+	}),
 	links: links
 }));
