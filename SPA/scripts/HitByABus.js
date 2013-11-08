@@ -1,11 +1,10 @@
 $(document).ready(function(){
-	$(".colorizeSelect").on("change", updateWithEnergy(0));
+	$(".colorizeSelect, .weightSelect").on("change", updateWithEnergy(0));
 	$("#nameInput").on("keyup", updateWithEnergy(0));
 
 	for(var i in enumerations){
 		addFilter(i);
 	}
-
 
 	var presetSelect = $(".presetSelect");
 	presets.forEach(function(preset, i){
@@ -120,10 +119,15 @@ var updateWithEnergy = function (energy) {
 			}
 
 			return true;
-		};		
+		};
 
+
+		// update link weight
+		var weightValue = $(".weightSelect").val();
 		var exponentialWeight = function(link) {
-			return (Math.pow(2, weightScale(getWeight(link)) * 2) - 1) / 3;
+			// return (Math.pow(2, weightScale(getWeight(link)) * 2) - 1) / 3;
+			// return link.relationship[weightValue] * .2;
+			return (Math.pow(2, weightScale(link.relationship[weightValue]) * 2) - 1) / 3;
 		};
 		
 
