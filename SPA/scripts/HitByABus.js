@@ -1,10 +1,10 @@
 $(document).ready(function(){
-	$(".colorizeSelect").on("change", updateWithEnergy(0));
+	$(".colorizeSelect, .weightSelect").on("change", updateWithEnergy(0));
+	$("#nameInput").on("keyup", updateWithEnergy(0));
 
 	for(var i in enumerations){
 		addFilter(i);
 	}
-
 
 	var presetSelect = $(".presetSelect");
 	presets.forEach(function(preset, i){
@@ -17,6 +17,10 @@ $(document).ready(function(){
 	$("#Jiggle").on("click", updateWithEnergy(0.2));
 	$("#Shake").on("click", updateWithEnergy(0.8));
 	$("#Upheaval").on("click", updateWithEnergy(2));
+
+	$("#infoLink").on("click", function(){
+		$("#lightbox").fadeIn("fast");
+	});
 
 	$("#HitWithBus").on("click", function () {
 		var heaviestNode, greatestWeight = -Infinity;
@@ -35,7 +39,7 @@ $(document).ready(function(){
 	});
 
 	$("#letsGoAlready, #lightbox").on("click", function(){
-		$("#lightbox").remove();
+		$("#lightbox").fadeOut("fast");
 		updateWithEnergy(1)();
 	});
 
@@ -43,19 +47,8 @@ $(document).ready(function(){
 });
 
 var constant = function (x) { return function () { return x;}; };
-var weightScale = d3.scale.linear().domain([0, 8]);
-var exponentialWeight = function(link) {
-	return Math.pow(2, weightScale(link.relationship.weight) * 3) / 8;
-};
-var color = d3.scale.category20();
 
-var defaultOpts = {
-	charge: constant(-90),
-	nodeFilter: constant(true),
-	linkDistance: constant(60),
-	linkStrength: exponentialWeight,
-	strokeWidth: function (link) { return exponentialWeight(link) * 8; }
-};
+var color = d3.scale.category20();
 
 function initForceGraph(err, graph){
 	var selector = "#graph";
@@ -72,16 +65,39 @@ function initForceGraph(err, graph){
 	loadPreset("0");
 }
 
+var getWeight = function (link) {
+	return link.relationship.otherWeight;
+}
+var weightScale = d3.scale.linear().domain([0, 8]);
+
+
 var excludedUIDs = [];
 var updateWithEnergy = function (energy) {
 	return function () {
-
 		// update colors
 		var colorizeBy = $(".colorizeSelect").val();
-		var nodeColor = function(node) {
-			return color( enumerations[colorizeBy].indexOf(node.person[colorizeBy].toString()));
-		};
-		updateColorKey(enumerations[colorizeBy]);
+		var nameFilter = $("#nameInput").val();
+
+		// if there is a name filter in place, colorize only that node
+		if(nameFilter){
+			var nodeColor = function(node) {
+				if(node.person.name === nameFilter){
+					return color(0);
+				} else {
+					return "#CCC";
+				}
+			};
+			updateColorKey([nameFilter]);
+
+		// otherwise, normal node colorization
+		} else {			
+			var nodeColor = function(node) {
+				return color( enumerations[colorizeBy].indexOf(node.person[colorizeBy].toString()));
+			};
+			updateColorKey(enumerations[colorizeBy]);
+		}
+		
+		
 
 		// update filters
 		var filterValues = {},
@@ -113,11 +129,25 @@ var updateWithEnergy = function (energy) {
 			return true;
 		};
 
-		var opts = $.extend(defaultOpts, {
+
+		// update link weight
+		var weightValue = $(".weightSelect").val();
+		var exponentialWeight = function(link) {
+			// return (Math.pow(2, weightScale(getWeight(link)) * 2) - 1) / 3;
+			// return link.relationship[weightValue] * .2;
+			return (Math.pow(2, weightScale(link.relationship[weightValue]) * 2) - 1) / 3;
+		};
+		
+
+		var opts = {
+			charge: constant(-90),
+			linkDistance: constant(60),
+			linkStrength: exponentialWeight,
+			strokeWidth: function (link) { return exponentialWeight(link) * 8 },
 			energy: energy,
 			nodeColor: nodeColor,
 			nodeFilter: nodeFilter
-		});
+		};
 
 		forceGraph.update(opts);
 	};
@@ -215,7 +245,7 @@ function clearTooltips(){
 function removeNode(node){
 	excludedUIDs.push(node.__data__.UID);
 	clearTooltips();
-	updateWithEnergy(Math.pow(2, weightScale(node.__data__.weight / 3) * 3) / 4)();
+	updateWithEnergy(2)();
 }
 
 function loadPreset(id){
