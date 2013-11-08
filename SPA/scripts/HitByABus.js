@@ -5,7 +5,23 @@ $(document).ready(function(){
 		addFilter(i);
 	}
 
-	$("#filtersDiv").on("change", ".filterSelect", updateWithEnergy(1));
+	$("#filtersDiv").on("change", ".filterSelect", updateWithEnergy(.8));
+
+	$("#Jiggle").on("click", updateWithEnergy(.2));
+	$("#Shake").on("click", updateWithEnergy(.8));
+	$("#Upheaval").on("click", updateWithEnergy(2));
+
+	$("#HitWithBus").on("click", function () {
+		var heaviestNode, greatestWeight = -Infinity;
+		$(".node").each(function (_, domNode) {
+			if (domNode.__data__.weight > greatestWeight) {
+				greatestWeight = domNode.__data__.weight;
+				heaviestNode = domNode;
+			}
+		});
+
+		if (heaviestNode) { removeNode(heaviestNode); }
+	});
 
 	NetworkRepository.CallWithNetworkData({}, initForceGraph);
 });
