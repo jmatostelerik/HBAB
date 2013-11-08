@@ -65,7 +65,7 @@
 		return {
 			update: function (options) {
 				var edgeIsIncluded = function (edge) {
-					return options.nodeFilter(edge.source) && options.nodeFilter(edge.target);
+					return options.nodeFilter(edge.source) && options.nodeFilter(edge.target) && options.linkStrength(edge) > 0;
 				};
 
 				edgeOn = domEdges().data(edges.filter(edgeIsIncluded), UIDkey);

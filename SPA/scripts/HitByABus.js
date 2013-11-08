@@ -44,19 +44,8 @@ $(document).ready(function(){
 });
 
 var constant = function (x) { return function () { return x;}; };
-var weightScale = d3.scale.linear().domain([0, 8]);
-var exponentialWeight = function(link) {
-	return Math.pow(2, weightScale(link.relationship.weight) * 3) / 8;
-};
-var color = d3.scale.category20();
 
-var defaultOpts = {
-	charge: constant(-90),
-	nodeFilter: constant(true),
-	linkDistance: constant(60),
-	linkStrength: exponentialWeight,
-	strokeWidth: function (link) { return exponentialWeight(link) * 8; }
-};
+var color = d3.scale.category20();
 
 function initForceGraph(err, graph){
 	var selector = "#graph";
@@ -73,10 +62,15 @@ function initForceGraph(err, graph){
 	loadPreset("0");
 }
 
+var getWeight = function (link) {
+	return link.relationship.otherWeight;
+}
+var weightScale = d3.scale.linear().domain([0, 8]);
+
+
 var excludedUIDs = [];
 var updateWithEnergy = function (energy) {
 	return function () {
-
 		// update colors
 		var colorizeBy = $(".colorizeSelect").val();
 		var nameFilter = $("#nameInput").val();
@@ -122,13 +116,22 @@ var updateWithEnergy = function (energy) {
 			}
 
 			return true;
-		};
+		};		
 
-		var opts = $.extend(defaultOpts, {
+		var exponentialWeight = function(link) {
+			return Math.pow(2, weightScale(getWeight(link)) * 2) / 4;
+		};
+		
+
+		var opts = {
+			charge: constant(-90),
+			linkDistance: constant(60),
+			linkStrength: exponentialWeight,
+			strokeWidth: function (link) { return exponentialWeight(link) * 8 },
 			energy: energy,
 			nodeColor: nodeColor,
 			nodeFilter: nodeFilter
-		});
+		};
 
 		forceGraph.update(opts);
 	};

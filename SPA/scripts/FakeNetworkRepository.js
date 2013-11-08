@@ -23,32 +23,41 @@
 	}
 
 	var whatAreTheyTalkingAbout = function (alice, bob) { 
-		var devlanguages = ["JavaScript", "JavaScript", "C#"," C#", "C#", "XAML", "HTML", "CSS", "SQL"];
-		var designLanguages = ["HTML", "HTML", "XAML", "CSS", "CSS"]
-		var products = ["RadControls", "RadControls", "RadControls", "Kendo UI", "Sitefinity", "Icenium", "Icenium"];
-		var miscellaneous = ["Football", "Internal news", "Internal news", "Internal news", "Social (not football)"]
-
-		if (random.coinFlip()) { return random.from(miscellaneous); }
-
-		if (alice["Skill"] === "Engineering") {
-			return random.from(random.coinFlip() ? devlanguages : products);
-		} else if (alice["Skill"] === "Design") {
-			return random.from(random.coinFlip() ? products : designLanguages);
-		} else {
-			return random.from(random.coinFlip() ? products : miscellaneous);
+		return {
+			"postTeam": alice.team === bob.team ? random.intUpTo(3) : 0,
+			"default": locationWeight(alice, bob) + skillWeight(alice, bob)
 		}
 	};
 
+	chanceGroupMatters = function (size) {
+		if (size < 4) {
+			return 1;
+		}
+
+		return ((Math.log(size) / Math.log(4) ) / (Math.pow(size, 2) / 16));
+	};
+
 	var newLink = function (list) {
+		var aspectWeight = function (key) {
+			return function (alice, bob) {
+				if (alice[key] !== bob[key]) { return 0; }
+
+				var numPeopleWithAspect = list.filter(function (person) { return person[key] === alice[key] }).length;
+				return Math.random() < chanceGroupMatters(numPeopleWithAspect) ? random.intUpTo(3) + 1 : 0
+			}
+		}
+
 		return function (indexLink) {
 			var leftPerson = list[indexLink.sourceIndex];
 			var rightPerson = list[indexLink.targetIndex];
+			var teamWeight = aspectWeight("team")(leftPerson, rightPerson);
+			var otherWeight = /*aspectWeight("location")(leftPerson, rightPerson) + */ aspectWeight("role")(leftPerson, rightPerson);
 			return {
 				UID: nextID(),
 				sourceUID: leftPerson.UID,
 				targetUID: rightPerson.UID,
-				weight: indexLink.weight,
-				topic: whatAreTheyTalkingAbout(leftPerson, rightPerson)
+				teamWeight: teamWeight + otherWeight,
+				otherWeight: otherWeight
 			}
 		};
 	}
@@ -59,7 +68,6 @@
 		return newLink(list)({
 			sourceIndex: sourceIndex,
 			targetIndex: random.intUpToNexceptFor(list.length, sourceIndex),
-			weight: (random.intUpTo(3) + random.intUpTo(4))
 		});
 	};
 
@@ -71,9 +79,8 @@
 
 				if (rawPeople !== undefined && rawPeople.length !== undefined)
 				{
-					var avgLinksPerPerson = 1;
-					var numSuperStars = 3;
-					var starPower = 15;
+					var numSuperStars = 6;
+					var starPower = 25;
 
 					people = rawPeople.map(function (person) {
 						return {
@@ -89,24 +96,18 @@
 					var numPeople = people.length;
 					var newPeopleLink = newLink(people);
 
-					for (var i = numPeople * avgLinksPerPerson; i > 0; i--) {
-						links.push(nonDegenerateLink(people));
-					}
-
 					for (var fromIndex = 0; fromIndex < numPeople; fromIndex++) {
 						for (var toIndex = fromIndex + 1; toIndex < numPeople; toIndex++) {
 							var left = people[fromIndex];
 							var right = people[toIndex];
-							if (left.team === right.team && random.intUpTo(3) !== 0)
-							{
-								links.push(
-									newPeopleLink({
-										sourceIndex: fromIndex,
-										targetIndex: toIndex,
-										weight: 2
-									})
-								)
-							}
+							var link = newPeopleLink({
+								sourceIndex: fromIndex,
+								targetIndex: toIndex,
+							});
+							
+							if (link.teamWeight > 0) {
+								links.push(link);
+							}							
 						}
 					}
 
