@@ -72,11 +72,20 @@
 				vertexOn.enter()
 				    .append("circle")
 				    .attr("class", "node")
-				    .attr("r", 9);
+				    .attr("r", 0)
+				    .transition()
+				    .delay(function(d, i){return 10*i;})
+				    .attr("r", 9)				    
+				    .ease("elastic", 5, 1.2);
 				    
 				vertexOn.style("fill", options.nodeColor);
 				
-				vertexOn.exit().remove();
+				vertexOn.exit()
+					.transition()
+				    .delay(function(d, i){return 5*i;})
+				    .attr("r", 0)				    
+				    .ease("bounce")
+				    .remove();
 
 
 
