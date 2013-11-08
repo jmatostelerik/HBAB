@@ -6,7 +6,10 @@
 
 	<style>
 		.node { stroke: #fff; stroke-width: 1.5px; }
-		.link { stroke: #999; stroke-opacity: .6; }
+		.link {
+			stroke: #999;
+			stroke-opacity: .6;
+		}
 	</style>
 
 </head>
@@ -18,19 +21,33 @@
 
 	<script src="lib/jquery-1.10.2.min.js"></script>
 	<script src="lib/d3.v3.js"></script>
-	<script src="scripts/ForceGraph.js"></script>
+	<script src="scripts/ForceGraph2.js"></script>
 	<script src="scripts/FakeNetworkRepository.js"></script>
 	<script>
-
-		var forceGraph;
-
-		NetworkRepository.CallWithNetworkData({}, function(error, graph) {
-			forceGraph = new ForceGraph(graph, "body", 500, 500);
-		});
+		
+		var strengthScale = d3.scale.linear().domain([0, 15]);
+		var distanceScale = d3.scale.linear().domain([20, 50]);
+		var color = d3.scale.category20();
+		var optionyThing = {
+			charge: "-30",
+			linkDistance: function(link) {
+				return distanceScale(link.relationship.weight) * 200;
+			},
+			linkStrength: function(link) {
+				return strengthScale(link.relationship.weight) * 0.5;
+			},
+			strokeWidth: function(link) {
+				return Math.sqrt(link.relationship.weight);
+			},
+			nodeColor: function(node) {
+				return color(node.person.team);
+			}
+		};
 
 		$(document).ready(function(){
-			$("button").on("click", function(e){
-				forceGraph.showRole($(e.target).attr("data-role"));
+			NetworkRepository.CallWithNetworkData({}, function(error, graph) {
+				window.forceGraph = newForceGraph(graph, "body", 1000, 1000);
+				forceGraph.update(optionyThing);
 			});
 		});
 

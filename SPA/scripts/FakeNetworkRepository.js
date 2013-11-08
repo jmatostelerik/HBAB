@@ -1,4 +1,7 @@
 (function () {
+	var _lastID = 10000;
+	var nextID = function () { _lastID++; return _lastID; }
+
 	var intUpTo = function(n) {
 		return  Math.floor(Math.random() * n);
 	};
@@ -23,8 +26,8 @@
 		var sourceIndex = random.intUpTo(list.length);
 
 		return {
-			source: sourceIndex,
-			target: random.intUpToNexceptFor(list.length, sourceIndex),
+			sourceUID: list[sourceIndex].UID,
+			targetUID: list[random.intUpToNexceptFor(list.length, sourceIndex)].UID,
 			weight: (random.intUpTo(3) + random.intUpTo(4))
 		};
 	};
@@ -43,6 +46,7 @@
 
 					people = rawPeople.map(function (person) {
 						return {
+							UID: nextID(),
 							name: person.Name,
 							team: person.TeamNumber,
 							location: person.Location,
@@ -53,7 +57,6 @@
 
 					var numPeople = people.length;
 
-
 					for (var i = numPeople * avgLinksPerPerson; i > 0; i--) {
 						links.push(nonDegenerateLink(people));
 					}
@@ -63,8 +66,8 @@
 							if (people[fromIndex].team === people[toIndex].team)
 							{
 								links.push({
-									source: fromIndex,
-									target: toIndex,
+									sourceUID: people[fromIndex].UID,
+									targetUID: people[toIndex].UID,
 									weight: 2
 								})
 							}
@@ -77,15 +80,17 @@
 						for (var j = 0; j < starPower; j++)
 						{
 							links.push({
-								source: starIndex,
-								target: random.intUpToNexceptFor(numPeople, starIndex),
+								sourceUID: people[starIndex].UID,
+								targetUID: people[random.intUpToNexceptFor(numPeople, starIndex)].UID,
 								weight: random.intUpTo(8)
 							})
 						}
 					}
 				}
 
-				callback(error, { nodes: people, links: links });
+				links.forEach(function (link) { link.UID = nextID(); });
+
+				callback(error, { people: people, relationships: links });
 			});
 		}
 	}
