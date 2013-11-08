@@ -3,18 +3,35 @@
 <head>
 	<title>Hit By A Bus</title>
 	<meta charset="utf-8">
-
-	<style>
-		.node { stroke: #fff; stroke-width: 1.5px; }
-		.link { stroke: #999; stroke-opacity: .6; }
-	</style>
-
+	<link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
 
-	<button data-role="Business">Show Only "Business"</button>
-	<button data-role="Engineering">Show Only "Engineering"</button>
-	<button data-role="Design">Show Only "Design"</button>
+	<div id="graph"></div>
+
+	<div id="controls">
+
+		<label>Colorize</label>
+		<select class="colorizeSelect">
+			<option>Team</option>
+			<option>Location</option>
+			<option>Role</option>
+		</select>
+
+		<label>Group</label>
+		<select class="groupSelect">
+			<option>Team</option>
+			<option>Location</option>
+			<option>Role</option>
+		</select>
+
+		<label>Filter</label>
+		<select class="filterSelect">
+			<option>Team</option>
+			<option>Location</option>
+			<option>Role</option>
+		</select>
+	</div>
 
 	<script src="lib/jquery-1.10.2.min.js"></script>
 	<script src="lib/d3.v3.js"></script>
@@ -43,7 +60,7 @@
 
 		$(document).ready(function(){
 			NetworkRepository.CallWithNetworkData({}, function(error, graph) {
-				window.forceGraph = newForceGraph(graph, "body", 1000, 1000);
+				window.forceGraph = newForceGraph(graph, "#graph", $(window).height(), $(window).width());
 				forceGraph.update(optionyThing);
 			});
 		});

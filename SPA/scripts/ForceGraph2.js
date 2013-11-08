@@ -24,22 +24,25 @@ var newForceGraph = function(pristineData, selector, height, width) {
 		});
 	});
 
-	var svg = d3.select(selector).append("svg");
+	var svg = d3.select(selector)
+		.append("svg")
+		.attr("height", height)
+		.attr("width", width);
 	var domVertices = function () { return svg.selectAll(".node"); };
 	var domEdges = function () { return svg.selectAll(".link"); };
 
 	var forceWeb = d3.layout.force()
 		.nodes(vertices)
 		.links(edges)
-		.size([height, width])
+		.size([width, height])
 		.on("tick", function (){
 			domVertices().attr("cx", function (vertex) { return vertex.x; })
-			   		     .attr("cy", function (vertex) { return vertex.y; });
-		   	
-		   	domEdges().attr("x1", function (edge) { return edge.source.x; })
-		   	          .attr("y1", function (edge) { return edge.source.y; })
-		   	          .attr("x2", function (edge) { return edge.target.x; })
-		   	          .attr("y2", function (edge) { return edge.target.y; });
+				.attr("cy", function (vertex) { return vertex.y; });
+
+			domEdges().attr("x1", function (edge) { return edge.source.x; })
+				.attr("y1", function (edge) { return edge.source.y; })
+				.attr("x2", function (edge) { return edge.target.x; })
+				.attr("y2", function (edge) { return edge.target.y; });
 		});
 
 	return {
@@ -72,5 +75,5 @@ var newForceGraph = function(pristineData, selector, height, width) {
 				.linkDistance(options.linkDistance)
 				.start();
 		}
-	}
-}
+	};
+};

@@ -88,15 +88,18 @@ ForceGraph.prototype = {
 	showRole: function(role){
 		var model = this.cloneModel();
 
-		model.nodes = model.nodes.filter(function(d){
-			if(d.role !== role){
-				d.visible = false;
-			} else {
-				d.visible = true;
-				return true;
-			}
-		});
-		model = this.removeDeadLinks(model);
+		if(role){
+			model.nodes = model.nodes.filter(function(d){
+				if(d.role !== role){
+					d.visible = false;
+				} else {
+					d.visible = true;
+					return true;
+				}
+			});
+
+			model = this.removeDeadLinks(model);
+		}
 		// TODO - make sure refresh isnt called before removeDeadLinks Finishes
 		this.refresh(model);
 	},
