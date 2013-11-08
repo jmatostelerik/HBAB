@@ -44,6 +44,19 @@ var newForceGraph = function(pristineData, selector, height, width) {
 
 	return {
 		update: function (options) {
+			edgeOn = domEdges().data(edges, UIDkey);
+			
+			edgeOn.enter()
+				.append("line")
+				.attr("class", "link");
+				//.style("stroke-width", options.strokeWidth);
+
+			edgeOn.exit().remove();
+
+			edgeOn.style("stroke-width", options.strokeWidth);
+
+
+
 			vertexOn = domVertices().data(vertices, UIDkey);
 			
 			vertexOn.enter()
@@ -55,16 +68,7 @@ var newForceGraph = function(pristineData, selector, height, width) {
 			
 			vertexOn.exit().remove();
 
-			edgeOn = domEdges().data(edges, UIDkey);
-			
-			edgeOn.enter()
-				.append("line")
-				.attr("class", "link");
-				//.style("stroke-width", options.strokeWidth);
 
-			edgeOn.exit().remove();
-
-			edgeOn.style("stroke-width", options.strokeWidth);
 
 			forceWeb
 				.charge(options.charge)
