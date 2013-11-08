@@ -123,7 +123,7 @@ var updateWithEnergy = function (energy) {
 		};		
 
 		var exponentialWeight = function(link) {
-			return Math.pow(2, weightScale(getWeight(link)) * 2) / 4;
+			return (Math.pow(2, weightScale(getWeight(link)) * 2) - 1) / 3;
 		};
 		
 

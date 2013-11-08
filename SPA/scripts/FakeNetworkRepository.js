@@ -51,7 +51,7 @@
 			var leftPerson = list[indexLink.sourceIndex];
 			var rightPerson = list[indexLink.targetIndex];
 			var teamWeight = aspectWeight("team")(leftPerson, rightPerson);
-			var otherWeight = /*aspectWeight("location")(leftPerson, rightPerson) + */ aspectWeight("role")(leftPerson, rightPerson);
+			var otherWeight = aspectWeight("location")(leftPerson, rightPerson) + aspectWeight("role")(leftPerson, rightPerson);
 			return {
 				UID: nextID(),
 				sourceUID: leftPerson.UID,
