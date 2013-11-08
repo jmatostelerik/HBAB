@@ -82,7 +82,7 @@
 
 				forceWeb
 					.charge(funcOrZeroIfNot(options.charge, options.nodeFilter))
-					.linkStrength(funcOrZeroIfNot(options.linkStrength, options.nodeFilter))
+					.linkStrength(funcOrZeroIfNot(options.linkStrength, edgeIsIncluded))
 					.linkDistance(options.linkDistance)
 					.start();
 			}
