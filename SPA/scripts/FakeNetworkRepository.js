@@ -15,16 +15,40 @@
 			}
 
 			return result;
-		}
+		},
+		from: function (list) {
+			return list[intUpTo(list.length)];
+ 		},
+ 		coinFlip: function () { return Math.random() < .5; }
 	}
+
+	var whatAreTheyTalkingAbout = function (alice, bob) { 
+		var devlanguages = ["JavaScript", "JavaScript", "C#"," C#", "C#", "XAML", "HTML", "CSS", "SQL"];
+		var designLanguages = ["HTML", "HTML", "XAML", "CSS", "CSS"]
+		var products = ["RadControls", "RadControls", "RadControls", "Kendo UI", "Sitefinity", "Icenium", "Icenium"];
+		var miscellaneous = ["Football", "Internal news", "Internal news", "Internal news", "Social (not football)"]
+
+		if (random.coinFlip()) { return random.from(miscellaneous); }
+
+		if (alice["Skill"] === "Engineering") {
+			return random.from(random.coinFlip() ? devlanguages : products);
+		} else if (alice["Skill"] === "Design") {
+			return random.from(random.coinFlip() ? products : designLanguages);
+		} else {
+			return random.from(random.coinFlip() ? products : miscellaneous);
+		}
+	};
 
 	var newLink = function (list) {
 		return function (indexLink) {
+			var leftPerson = list[indexLink.sourceIndex];
+			var rightPerson = list[indexLink.targetIndex];
 			return {
 				UID: nextID(),
-				sourceUID: list[indexLink.sourceIndex].UID,
-				targetUID: list[indexLink.targetIndex].UID,
-				weight: indexLink.weight
+				sourceUID: leftPerson.UID,
+				targetUID: rightPerson.UID,
+				weight: indexLink.weight,
+				topic: whatAreTheyTalkingAbout(leftPerson, rightPerson)
 			}
 		};
 	}
@@ -71,7 +95,9 @@
 
 					for (var fromIndex = 0; fromIndex < numPeople; fromIndex++) {
 						for (var toIndex = fromIndex + 1; toIndex < numPeople; toIndex++) {
-							if (people[fromIndex].team === people[toIndex].team)
+							var left = people[fromIndex];
+							var right = people[toIndex];
+							if (left.team === right.team && random.intUpTo(3) !== 0)
 							{
 								links.push(
 									newPeopleLink({
