@@ -233,7 +233,7 @@ function clearTooltips(){
 function removeNode(node){
 	excludedUIDs.push(node.__data__.UID);
 	clearTooltips();
-	updateWithEnergy(Math.pow(2, weightScale(node.__data__.weight / 3) * 3) / 4)();
+	updateWithEnergy(2)();
 }
 
 function loadPreset(id){
