@@ -26,7 +26,10 @@
 		var distanceScale = d3.scale.linear().domain([20, 50]);
 		var color = d3.scale.category20();
 		var optionyThing = {
-			charge: "-90",
+			charge: function () { return -90; },
+			nodeFilter: function (node){
+				return node.UID % 2 === 0;
+			},
 			linkDistance: function(link) {
 				return distanceScale(link.relationship.weight) * 200;
 			},

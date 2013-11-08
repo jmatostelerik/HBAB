@@ -44,12 +44,15 @@ var newForceGraph = function(pristineData, selector, height, width) {
 
 	return {
 		update: function (options) {
-			edgeOn = domEdges().data(edges, UIDkey);
+			var edgeIsIncluded = function (edge) {
+				return options.nodeFilter(edge.source) && options.nodeFilter(edge.target);
+			};
+
+			edgeOn = domEdges().data(edges.filter(edgeIsIncluded), UIDkey);
 			
 			edgeOn.enter()
 				.append("line")
 				.attr("class", "link");
-				//.style("stroke-width", options.strokeWidth);
 
 			edgeOn.exit().remove();
 
@@ -57,7 +60,7 @@ var newForceGraph = function(pristineData, selector, height, width) {
 
 
 
-			vertexOn = domVertices().data(vertices, UIDkey);
+			vertexOn = domVertices().data(vertices.filter(options.nodeFilter), UIDkey);
 			
 			vertexOn.enter()
 			    .append("circle")
@@ -71,8 +74,12 @@ var newForceGraph = function(pristineData, selector, height, width) {
 
 
 			forceWeb
-				.charge(options.charge)
-				.linkStrength(options.linkStrength)
+				.charge(function (node) {
+					return options.nodeFilter(node) ? options.charge(node) : 0;;
+				})
+				.linkStrength(function (link) {
+					return edgeIsIncluded(link) ? options.linkStrength(link) : 0;
+				})
 				.linkDistance(options.linkDistance)
 				.start();
 		}
