@@ -1,4 +1,5 @@
 (function () {
+	var STOP_ENERGY = .1;
 	var funcOrZeroIfNot = function(func, predicate) {
 		return function (item) {
 			return predicate(item) ? func(item) : 0;
@@ -47,8 +48,17 @@
 			   	          .attr("y1", function (edge) { return edge.source.y; })
 			   	          .attr("x2", function (edge) { return edge.target.x; })
 			   	          .attr("y2", function (edge) { return edge.target.y; });
+   	          	if (forceWeb.alpha < STOP_ENERGY) {
+   	          		forceWeb.alpha = 0;
+   	          	}
 			});
 
+		var getFrictionToMakeDurationProportionalToEnergy = function (initialEnergy) {
+			return initialEnergy === 0 ?
+				.5
+				: Math.pow(2, (Math.log(STOP_ENERGY) - Math.log(initialEnergy)) / (10 * initialEnergy));
+		}
+		
 		return {
 			update: function (options) {
 				var edgeIsIncluded = function (edge) {
@@ -92,12 +102,12 @@
 				forceWeb
 					.charge(funcOrZeroIfNot(options.charge, options.nodeFilter))
 					.linkStrength(funcOrZeroIfNot(options.linkStrength, edgeIsIncluded))
-					.linkDistance(options.linkDistance)
-					.friction(.95);
+					.linkDistance(options.linkDistance);
 
 				if (options.energy !== 0) {
 					forceWeb
 						.start()
+						.friction(getFrictionToMakeDurationProportionalToEnergy(options.energy))
 						.alpha(options.energy);
 				}
 			}
