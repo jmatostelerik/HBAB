@@ -25,15 +25,25 @@
 			<option>Role</option>
 		</select>
 
-		<label>Filter</label>
+		<label>Filter By</label>
 		<select class="filterSelect">
 			<option>Team</option>
 			<option>Location</option>
 			<option>Role</option>
 		</select>
+
+		<label>Role sub-filter</label>
+		<select class="roleSelect">
+			<option>Design</option>
+			<option>Business</option>
+			<option>Engineering</option>
+		</select>
 	</div>
 
+	<div id="colorKey"></div>
+
 	<script src="lib/jquery-1.10.2.min.js"></script>
+	<script src="scripts/script.js"></script>
 	<script src="lib/d3.v3.js"></script>
 	<script src="scripts/ForceGraph.js"></script>
 	<script src="scripts/FakeNetworkRepository.js"></script>
@@ -42,9 +52,10 @@
 		var strengthScale = d3.scale.linear().domain([0, 15]);
 		var distanceScale = d3.scale.linear().domain([20, 50]);
 		var color = d3.scale.category20();
-		var optionyThing = {
+		var defaultOpts = {
 			charge: function () { return -90; },
 			nodeFilter: function (node){
+				// return node.person.role === "Design";
 				return true;
 			},
 			linkDistance: function(link) {
@@ -57,16 +68,39 @@
 				return Math.sqrt(link.relationship.weight);
 			},
 			nodeColor: function(node) {
-				return color(node.person.team);
+				return color( roles.indexOf(node.person.role));
 			}
 		};
 
 		$(document).ready(function(){
 			NetworkRepository.CallWithNetworkData({}, function(error, graph) {
 				window.forceGraph = newForceGraph(graph, "#graph", $(window).innerHeight(), $(window).innerWidth());
-				forceGraph.update(optionyThing);
+				updateForceGraphOpts();
 			});
 		});
+
+		function updateForceGraphOpts(){
+			var opts = $.extend({}, defaultOpts);
+
+			// grab options from ui controls
+/*			var filterBy = $(".roleSelect").val();
+
+			opts.nodeFilter = function(node){
+				return node.person.role === filterBy;
+			};*/
+
+			forceGraph.update(opts);
+			updateColorKey(roles);
+		}
+
+		function updateColorKey(arr){
+			var html = ["<div>Color Key</div>"];
+			arr.forEach(function(str, i){
+				html.push("<div class='colorKeyBlock' style='background-color: "+ color(i) +";'></div>");
+				html.push("<div class='colorKeyValue'>"+ str +"</div><br>");
+			});
+			$("#colorKey").html(html.join(""));
+		}
 
 	</script>
 </body>

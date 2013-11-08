@@ -2,8 +2,8 @@
 
 html, body { height: 100%; width: 100%;}
 
-.node { stroke: #fff; stroke-width: 1.5px; }
-.link { stroke: #999; stroke-opacity: .6; }
+.node { stroke: #fff; stroke-width: 1px; }
+.link { stroke: #999; stroke-opacity: .4; }
 
 #controls { position: relative; width: 200px; height: 100%; padding: 10px; background-color: #555; z-index: 10;}
 #controls label { display: block; font-size: .8em; color: #CCC; margin-bottom: 2px;}
@@ -11,3 +11,7 @@ html, body { height: 100%; width: 100%;}
 
 
 #graph {position: absolute; top: 0; left: 0;}
+
+#colorKey { position: absolute; top: 10px; right: 10px; }
+#colorKey .colorKeyBlock { width: 10px; height: 10px; display: inline-block;}
+#colorKey .colorKeyValue { font-size: .8em; display: inline-block; padding: 2px;}
