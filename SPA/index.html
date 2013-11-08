@@ -13,9 +13,9 @@
 
 		<label>Colorize</label>
 		<select class="colorizeSelect">
-			<option>Team</option>
-			<option>Location</option>
-			<option>Role</option>
+			<option value="team">Team</option>
+			<option value="location">Location</option>
+			<option value="role">Role</option>
 		</select>
 
 		<label>Group</label>
@@ -89,17 +89,14 @@
 				return node.person.role === filterBy;
 			};*/
 
-			forceGraph.update(opts);
-			updateColorKey(roles);
-		}
+			var colorizeBy = $(".colorizeSelect").val();
 
-		function updateColorKey(arr){
-			var html = ["<div>Color Key</div>"];
-			arr.forEach(function(str, i){
-				html.push("<div class='colorKeyBlock' style='background-color: "+ color(i) +";'></div>");
-				html.push("<div class='colorKeyValue'>"+ str +"</div><br>");
-			});
-			$("#colorKey").html(html.join(""));
+			opts.nodeColor = function(node) {
+				return color( enumerations[colorizeBy].indexOf(node.person[colorizeBy].toString()));
+			}
+
+			forceGraph.update(opts);
+			updateColorKey(enumerations[colorizeBy]);
 		}
 
 	</script>
