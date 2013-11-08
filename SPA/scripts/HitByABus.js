@@ -8,10 +8,75 @@ $(document).ready(function(){
 
 	$("#filtersDiv").on("change", ".filterSelect", updateForceGraphOpts);
 
+	NetworkRepository.CallWithNetworkData({}, initForceGraph);
 });
 
 
+var strengthScale = d3.scale.linear().domain([0, 15]);
+var distanceScale = d3.scale.linear().domain([20, 50]);
+var color = d3.scale.category20();
+var defaultOpts = {
+	charge: function () { return -90; },
+	nodeFilter: function (node){
+		return true;
+	},
+	linkDistance: function(link) {
+		return distanceScale(link.relationship.weight) * 200;
+	},
+	linkStrength: function(link) {
+		return strengthScale(link.relationship.weight) * 0.5;
+	},
+	strokeWidth: function(link) {
+		return Math.sqrt(link.relationship.weight * 2);
+	},
+	nodeColor: function(node) {
+		return color( roles.indexOf(node.person.role));
+	}
+};
 
+function initForceGraph(err, graph){
+	var selector = "#graph";
+	window.forceGraph = newForceGraph(graph, selector, $(window).innerHeight(), $(window).innerWidth());
+	updateForceGraphOpts();
+	$(selector).on("mouseenter mouseleave", ".node", function(e){
+		if(e.type === "mouseenter")	createTooltip(this);
+		else clearTooltips();
+	});
+	$(selector).on("click", ".node", function(e){
+		removeNode(this);
+	});
+}
+
+function updateForceGraphOpts(){
+	var opts = $.extend({}, defaultOpts);
+
+	// update colors
+	var colorizeBy = $(".colorizeSelect").val();
+	opts.nodeColor = function(node) {
+		return color( enumerations[colorizeBy].indexOf(node.person[colorizeBy].toString()));
+	}
+	updateColorKey(enumerations[colorizeBy]);
+
+	// update filters
+	var filterValues = {},
+		filterSelects = $("#filtersDiv .filterSelect");
+
+	filterSelects.each(function(i, el){
+		var $el = $(el);
+		filterValues[$el.attr("data-name")] = $el.val();
+	});
+	opts.nodeFilter = function (node){
+		for(var i in filterValues){
+			if(filterValues[i].indexOf(node.person[i].toString()) === -1){
+				return false;
+			}
+		}
+		return true;
+	},
+
+
+	forceGraph.update(opts);
+}
 
 // define some enumerators to map colors to keys
 var enumerations = {
