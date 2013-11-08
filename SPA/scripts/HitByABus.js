@@ -19,6 +19,10 @@ $(document).ready(function(){
 	$("#Shake").on("click", updateWithEnergy(0.8));
 	$("#Upheaval").on("click", updateWithEnergy(2));
 
+	$("#infoLink").on("click", function(){
+		$("#lightbox").fadeIn("fast");
+	});
+
 	$("#HitWithBus").on("click", function () {
 		var heaviestNode, greatestWeight = -Infinity;
 		$(".node").each(function (_, domNode) {
@@ -36,7 +40,7 @@ $(document).ready(function(){
 	});
 
 	$("#letsGoAlready, #lightbox").on("click", function(){
-		$("#lightbox").remove();
+		$("#lightbox").fadeOut("fast");
 		updateWithEnergy(1)();
 	});
 

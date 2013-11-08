@@ -48,6 +48,10 @@ h4 {color: greenyellow; padding: 2px 0; margin: 5px 0;}
 	-webkit-box-shadow:  0px 0px 10px 0px rgba(0, 0, 0, .5);        
 	box-shadow:  0px 0px 10px 0px rgba(0, 0, 0, .5);
 }
+#modalDialogue h1 { font-weight: normal; margin-bottom: 10px; color: #666; }
 
 #letsGoAlready{ position: absolute; bottom: 10px; right: 20px; padding: 5px 15px; margin-bottom: 10px; border: solid greenyellow 1px; background-color: greenyellow; cursor: pointer; font-size: 1.2em;}
 #letsGoAlready:hover{ background-color: lime; }
+
+#infoLink { position: absolute; bottom: 10px; left: 15px; z-index: 11; color: white; font-weight: bold; text-decoration: none;}
+#infoLink:hover {color: limegreen;}
