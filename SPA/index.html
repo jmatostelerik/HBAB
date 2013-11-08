@@ -57,19 +57,21 @@
 		};
 
 		$(document).ready(function(){
-			NetworkRepository.CallWithNetworkData({}, function(error, graph) {
-				var selector = "#graph";
-				window.forceGraph = newForceGraph(graph, selector, $(window).innerHeight(), $(window).innerWidth());
-				updateForceGraphOpts();
-				$(selector).on("mouseenter mouseleave", ".node", function(e){
-					if(e.type === "mouseenter")	createTooltip(this);
-					else clearTooltips();
-				});
-				$(selector).on("click", ".node", function(e){
-					removeNode(this);
-				});
-			});
+			NetworkRepository.CallWithNetworkData({}, initForceGraph);
 		});
+
+		function initForceGraph(err, graph){
+			var selector = "#graph";
+			window.forceGraph = newForceGraph(graph, selector, $(window).innerHeight(), $(window).innerWidth());
+			updateForceGraphOpts();
+			$(selector).on("mouseenter mouseleave", ".node", function(e){
+				if(e.type === "mouseenter")	createTooltip(this);
+				else clearTooltips();
+			});
+			$(selector).on("click", ".node", function(e){
+				removeNode(this);
+			});
+		}
 
 		function updateForceGraphOpts(){
 			var opts = $.extend({}, defaultOpts);
