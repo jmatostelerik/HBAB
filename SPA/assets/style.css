@@ -5,7 +5,7 @@ html, body { height: 100%; width: 100%;}
 .node { stroke: #fff; stroke-width: 1px; }
 .link { stroke: #999; stroke-opacity: .4; }
 
-#controls { position: relative; width: 200px; height: 100%; padding: 10px; background-color: #555; z-index: 10;}
+#controls { position: relative; width: 200px; height: 100%; padding: 10px; background-color: #555; z-index: 10; overflow: auto;}
 #controls label { display: block; font-size: .8em; color: #CCC; margin-bottom: 2px;}
 #controls select { padding: 2px; margin-bottom: 10px; border: solid #CCC 1px; background-color: #EEE; width: 100%;}
 
@@ -15,3 +15,5 @@ html, body { height: 100%; width: 100%;}
 #colorKey { position: absolute; top: 10px; right: 10px; }
 #colorKey .colorKeyBlock { width: 10px; height: 10px; display: inline-block;}
 #colorKey .colorKeyValue { font-size: .8em; display: inline-block; padding: 2px;}
+
+#filtersDiv h4 {color: #CCC; border-bottom: solid white 1px; padding: 2px 0; margin: 5px 0;}

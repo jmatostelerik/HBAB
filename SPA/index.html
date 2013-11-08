@@ -23,21 +23,12 @@
 			<option>Team</option>
 			<option>Location</option>
 			<option>Role</option>
-		</select>
+		</select><br><br>
 
-		<label>Filter By</label>
-		<select class="filterSelect">
-			<option>Team</option>
-			<option>Location</option>
-			<option>Role</option>
-		</select>
+		<div id="filtersDiv">
+			<h4>Filters</h4>
+		</div>
 
-		<label>Role sub-filter</label>
-		<select class="roleSelect">
-			<option>Design</option>
-			<option>Business</option>
-			<option>Engineering</option>
-		</select>
 	</div>
 
 	<div id="colorKey"></div>
@@ -82,21 +73,32 @@
 		function updateForceGraphOpts(){
 			var opts = $.extend({}, defaultOpts);
 
-			// grab options from ui controls
-/*			var filterBy = $(".roleSelect").val();
-
-			opts.nodeFilter = function(node){
-				return node.person.role === filterBy;
-			};*/
-
+			// update colors
 			var colorizeBy = $(".colorizeSelect").val();
-
 			opts.nodeColor = function(node) {
 				return color( enumerations[colorizeBy].indexOf(node.person[colorizeBy].toString()));
 			}
+			updateColorKey(enumerations[colorizeBy]);
+
+			// update filters
+			var filterValues = {},
+				filterSelects = $("#filtersDiv .filterSelect");
+
+			filterSelects.each(function(i, el){
+				var $el = $(el);
+				filterValues[$el.attr("data-name")] = $el.val();
+			});
+			opts.nodeFilter = function (node){
+				for(var i in filterValues){
+					if(filterValues[i].indexOf(node.person[i].toString()) === -1){
+						return false;
+					}
+				}
+				return true;
+			},
+
 
 			forceGraph.update(opts);
-			updateColorKey(enumerations[colorizeBy]);
 		}
 
 	</script>

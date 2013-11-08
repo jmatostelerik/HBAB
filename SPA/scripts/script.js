@@ -2,6 +2,12 @@ $(document).ready(function(){
 
 	$(".colorizeSelect").on("change", updateForceGraphOpts);
 
+	for(var i in enumerations){
+		addFilter(i);
+	}
+
+	$("#filtersDiv").on("change", ".filterSelect", updateForceGraphOpts);
+
 });
 
 
@@ -24,4 +30,14 @@ function updateColorKey(arr){
 		html.push("<div class='colorKeyValue'>"+ str +"</div><br>");
 	});
 	$("#colorKey").html(html.join(""));
+}
+
+function addFilter(name){
+	var html = ["<label>"+ (name.charAt(0).toUpperCase() + name.slice(1)) +"</label>"];
+	html.push("<select class='filterSelect' data-name='"+ name +"' multiple>");
+	enumerations[name].forEach(function(str, i){
+		html.push("<option value='"+ str +"' selected>"+ str +"</option>");
+	});
+	html.push("</select>");
+	$("#filtersDiv").append(html.join(""));
 }
