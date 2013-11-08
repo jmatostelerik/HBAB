@@ -1,5 +1,6 @@
 $(document).ready(function(){
-	$(".colorizeSelect, .weightSelect").on("change", updateWithEnergy(0));
+	$(".colorizeSelect").on("change", updateWithEnergy(0));
+	$(".weightSelect").on("change", updateWithEnergy(0.8));
 	$("#nameInput").on("keyup", updateWithEnergy(0));
 
 	for(var i in enumerations){
