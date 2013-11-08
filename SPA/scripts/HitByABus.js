@@ -34,6 +34,11 @@ $(document).ready(function(){
 		loadPreset($(e.target).val());
 	});
 
+	$("#letsGoAlready, #lightbox").on("click", function(){
+		$("#lightbox").remove();
+		updateWithEnergy(1)();
+	});
+
 	NetworkRepository.CallWithNetworkData({}, initForceGraph);
 });
 
@@ -124,7 +129,7 @@ var presets = [
 	{
 		name: "Role Distribution per Team",
 		config: {
-			colorizeSelect: "team",
+			colorizeSelect: "role",
 			filters: {
 				"role": "Engineering,Design,Business".split(","),
 				"location": "Europe,APAC,North America".split(","),
@@ -137,6 +142,16 @@ var presets = [
 			colorizeSelect: "location",
 			filters: {
 				"role": ["Engineering"],
+				"location": "Europe,APAC,North America".split(","),
+				"team": "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17".split(",")
+			}
+		}
+	},{
+		name: "Connections between Teams",
+		config: {
+			colorizeSelect: "team",
+			filters: {
+				"role": "Engineering,Design,Business".split(","),
 				"location": "Europe,APAC,North America".split(","),
 				"team": "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17".split(",")
 			}
@@ -203,12 +218,12 @@ function loadPreset(id){
 		$("#presetTitle").text("Custom");
 
 	} else {
-		// $("#customOptions").hide("fast");		
+		$("#customOptions").hide("fast");		
 		$("#presetTitle").text(preset.name);
 		$(".colorizeSelect").val(preset.config.colorizeSelect);
 		for(var i in preset.config.filters){
 			$(".filterSelect[data-name='"+ i +"']").val(preset.config.filters[i]);
 		}
-		updateWithEnergy(0)(0.2);
+		updateWithEnergy(0.8)();
 	}
 }
