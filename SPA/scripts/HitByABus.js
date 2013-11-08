@@ -12,20 +12,17 @@ $(document).ready(function(){
 });
 
 var constant = function (x) { return function () { return x;}; };
-var strengthScale = d3.scale.linear().domain([0, 15]);
-var distanceScale = d3.scale.linear().domain([20, 50]);
+var weightScale = d3.scale.linear().domain([0, 8]);
 var color = d3.scale.category20();
 var defaultOpts = {
 	charge: constant(-120),
 	nodeFilter: constant(true),
-	linkDistance: function(link) {
-		return distanceScale(link.relationship.weight) * 200;
-	},
+	linkDistance: constant(30),
 	linkStrength: function(link) {
-		return strengthScale(link.relationship.weight) * 0.5;
+		return weightScale(link.relationship.weight) * weightScale(link.relationship.weight);
 	},
 	strokeWidth: function(link) {
-		return Math.sqrt(link.relationship.weight * 2);
+		return Math.pow(1.5, weightScale(link.relationship.weight) * 4);
 	},
 	nodeColor: function(node) {
 		return color( roles.indexOf(node.person.role));
