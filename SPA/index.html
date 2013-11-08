@@ -45,7 +45,7 @@
 		var optionyThing = {
 			charge: function () { return -90; },
 			nodeFilter: function (node){
-				return node.UID % 2 === 0;
+				return true;
 			},
 			linkDistance: function(link) {
 				return distanceScale(link.relationship.weight) * 200;
