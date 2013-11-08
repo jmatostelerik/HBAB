@@ -35,7 +35,20 @@
 			});
 		});
 
-		var svg = d3.select(selector).append("svg").attr("width", width).attr("height", height);
+		var redraw = function() {
+		  console.log("here", d3.event.translate, d3.event.scale);
+		  svg.attr("transform",
+		      "translate(" + d3.event.translate + ")"
+		      + " scale(" + d3.event.scale + ")");
+		}
+
+		var svg = d3.select(selector)
+					.append("svg")
+					.attr("width", width)
+					.attr("height", height)
+					.attr("pointer-events", "all")
+					.append('svg:g')
+					.call(d3.behavior.zoom().on("zoom", redraw));
 		var domVertices = function () { return svg.selectAll(".node"); };
 		var domEdges = function () { return svg.selectAll(".link"); };
 
@@ -99,8 +112,6 @@
 				    .attr("r", 0)				    
 				    .ease("bounce")
 				    .remove();
-
-
 
 				forceWeb
 					.charge(funcOrZeroIfNot(options.charge, options.nodeFilter))
