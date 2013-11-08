@@ -43,12 +43,13 @@
 		}
 
 		var svg = d3.select(selector)
-					.append("svg")
-					.attr("width", width)
-					.attr("height", height)
-					.attr("pointer-events", "all")
+					.append("svg:svg")
+						.attr("width", width)
+						.attr("height", height)
+						.attr("pointer-events", "all")
 					.append('svg:g')
-					.call(d3.behavior.zoom().on("zoom", redraw))
+						.call(d3.behavior.zoom().on("zoom", redraw))
+				  	.append('svg:g');
 
 		svg.append('svg:rect')
 			.attr('width', width)
