@@ -11,8 +11,7 @@ $(document).ready(function(){
 		presetSelect.append("<option value='"+ i +"'>"+ preset.name +"</option>");
 	});
 	presetSelect.append("<option value=''>--Custom--</option>");
-	loadPreset("0");
-
+	
 
 	$("#filtersDiv").on("change", ".filterSelect", updateWithEnergy(0.8));
 	$("#Jiggle").on("click", updateWithEnergy(0.2));
@@ -64,6 +63,8 @@ function initForceGraph(err, graph){
 	$(selector).on("click", ".node", function(e){
 		removeNode(this);
 	});
+
+	loadPreset("0");
 }
 
 var excludedUIDs = [];
@@ -123,11 +124,21 @@ var presets = [
 	{
 		name: "Role Distribution per Team",
 		config: {
-			"colorizeSelect": "",
+			colorizeSelect: "team",
 			filters: {
-				"role": "",
-				"location": "",
-				"team": ""
+				"role": "Engineering,Design,Business".split(","),
+				"location": "Europe,APAC,North America".split(","),
+				"team": "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17".split(",")
+			}
+		}
+	},{
+		name: "Devs by Location",
+		config: {
+			colorizeSelect: "location",
+			filters: {
+				"role": ["Engineering"],
+				"location": "Europe,APAC,North America".split(","),
+				"team": "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17".split(",")
 			}
 		}
 	}
@@ -192,7 +203,12 @@ function loadPreset(id){
 		$("#presetTitle").text("Custom");
 
 	} else {
-		$("#customOptions").hide("fast");		
+		// $("#customOptions").hide("fast");		
 		$("#presetTitle").text(preset.name);
+		$(".colorizeSelect").val(preset.config.colorizeSelect);
+		for(var i in preset.config.filters){
+			$(".filterSelect[data-name='"+ i +"']").val(preset.config.filters[i]);
+		}
+		updateWithEnergy(0)(0.2);
 	}
 }
