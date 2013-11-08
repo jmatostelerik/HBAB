@@ -11,15 +11,13 @@ $(document).ready(function(){
 	NetworkRepository.CallWithNetworkData({}, initForceGraph);
 });
 
-
+var constant = function (x) { return function () { return x;}; };
 var strengthScale = d3.scale.linear().domain([0, 15]);
 var distanceScale = d3.scale.linear().domain([20, 50]);
 var color = d3.scale.category20();
 var defaultOpts = {
-	charge: function () { return -90; },
-	nodeFilter: function (node){
-		return true;
-	},
+	charge: constant(-120),
+	nodeFilter: constant(true),
 	linkDistance: function(link) {
 		return distanceScale(link.relationship.weight) * 200;
 	},
@@ -47,6 +45,7 @@ function initForceGraph(err, graph){
 	});
 }
 
+var excludedUIDs = [];
 function updateForceGraphOpts(){
 	var opts = $.extend({}, defaultOpts);
 
@@ -71,9 +70,13 @@ function updateForceGraphOpts(){
 				return false;
 			}
 		}
+
+		if (excludedUIDs.some(function (UID) { return UID === node.UID })) {
+			return false;
+		}
+
 		return true;
 	},
-
 
 	forceGraph.update(opts);
 }
@@ -84,9 +87,6 @@ var enumerations = {
 	location: "Europe,APAC,North America".split(","),
 	team: "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17".split(",")
 };
-
-
-
 
 function updateColorKey(arr){
 	var html = ["<div>Color Key</div>"];
@@ -134,5 +134,7 @@ function clearTooltips(){
 }
 
 function removeNode(node){
-	alert("requesting removal of node with id '"+ node.__data__.UID +"'");
+	excludedUIDs.push(node.__data__.UID);
+	clearTooltips();
+	updateForceGraphOpts();
 }
