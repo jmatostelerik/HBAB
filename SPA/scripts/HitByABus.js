@@ -109,6 +109,14 @@ var updateWithEnergy = function (energy) {
 			filterValues[$el.attr("data-name")] = $el.val();
 		});
 		var nodeFilter = function (node){
+			//Adjust Node weight
+				//Get Pristine datasource
+				//get node.UID from pristine datasource
+
+				//get status of team filter
+				//sum weights from prisitine datasource
+				//apply weight to node
+
 			for(var i in filterValues){
 				if(filterValues[i].indexOf(node.person[i].toString()) === -1){
 					return false;
