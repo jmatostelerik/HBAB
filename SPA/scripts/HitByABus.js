@@ -13,17 +13,17 @@ $(document).ready(function(){
 
 var constant = function (x) { return function () { return x;}; };
 var weightScale = d3.scale.linear().domain([0, 8]);
+var exponentialWeight = function(link) {
+	return Math.pow(2, weightScale(link.relationship.weight) * 3) / 8;
+};
 var color = d3.scale.category20();
+
 var defaultOpts = {
-	charge: constant(-120),
+	charge: constant(-90),
 	nodeFilter: constant(true),
-	linkDistance: constant(30),
-	linkStrength: function(link) {
-		return weightScale(link.relationship.weight) * weightScale(link.relationship.weight);
-	},
-	strokeWidth: function(link) {
-		return Math.pow(1.5, weightScale(link.relationship.weight) * 4);
-	},
+	linkDistance: constant(60),
+	linkStrength: exponentialWeight,
+	strokeWidth: function (link) { return exponentialWeight(link) * 8 },
 	nodeColor: function(node) {
 		return color( roles.indexOf(node.person.role));
 	}
