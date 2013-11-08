@@ -2,7 +2,7 @@
 
 html, body { height: 100%; width: 100%;}
 
-.node { stroke: #fff; stroke-width: 1px; }
+.node { stroke: #fff; stroke-width: 1px; cursor: pointer; }
 .link { stroke: #999; stroke-opacity: .4; }
 
 #controls { position: relative; width: 200px; height: 100%; padding: 10px; background-color: #555; z-index: 10; overflow: auto;}
@@ -17,3 +17,12 @@ html, body { height: 100%; width: 100%;}
 #colorKey .colorKeyValue { font-size: .8em; display: inline-block; padding: 2px;}
 
 #filtersDiv h4 {color: #CCC; border-bottom: solid white 1px; padding: 2px 0; margin: 5px 0;}
+
+
+.tooltip{ position: absolute; background-color: white; border: solid #CCC 1px; border-radius: 4px; font-size: .6em; color: #666; padding: 5px; text-align: center; }
+.tooltip .name { font-size: 1.3em; font-weight: bold; margin: auto;}
+.tooltip span { padding: 0 5px; }
+.tooltip .location { font-weight: bold;}
+.tooltip .role { font-style: italic;}
+.tooltip .team { color: orange;}
+.tooltip .hit { font-weight: bold; color: red;}

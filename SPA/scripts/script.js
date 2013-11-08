@@ -41,3 +41,33 @@ function addFilter(name){
 	html.push("</select>");
 	$("#filtersDiv").append(html.join(""));
 }
+
+function createTooltip(node){
+	var person = node.__data__.person,
+		html = ["<div class='tooltip'>"];
+
+	html.push("<div class='name'>"+ person.name +"</div>");
+
+	for(var i in enumerations){
+		html.push("<span class='"+ i +"'>"+ person[i] +"</span>");
+	}
+	
+	html.push("</div>");
+
+	html = $(html.join(""));
+
+	$("body").append(html);
+
+	html.css({
+		"top": node.__data__.y - html.height() - 20,
+		"left": node.__data__.x - html.width() * 0.5
+	});
+}
+
+function clearTooltips(){
+	$(".tooltip").remove();
+}
+
+function removeNode(node){
+	alert("requesting removal of node with id '"+ node.__data__.UID +"'");
+}

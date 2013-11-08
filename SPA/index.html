@@ -16,13 +16,6 @@
 			<option value="team">Team</option>
 			<option value="location">Location</option>
 			<option value="role">Role</option>
-		</select>
-
-		<label>Group</label>
-		<select class="groupSelect">
-			<option>Team</option>
-			<option>Location</option>
-			<option>Role</option>
 		</select><br><br>
 
 		<div id="filtersDiv">
@@ -65,8 +58,16 @@
 
 		$(document).ready(function(){
 			NetworkRepository.CallWithNetworkData({}, function(error, graph) {
-				window.forceGraph = newForceGraph(graph, "#graph", $(window).innerHeight(), $(window).innerWidth());
+				var selector = "#graph";
+				window.forceGraph = newForceGraph(graph, selector, $(window).innerHeight(), $(window).innerWidth());
 				updateForceGraphOpts();
+				$(selector).on("mouseenter mouseleave", ".node", function(e){
+					if(e.type === "mouseenter")	createTooltip(this);
+					else clearTooltips();
+				});
+				$(selector).on("click", ".node", function(e){
+					removeNode(this);
+				});
 			});
 		});
 
