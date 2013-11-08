@@ -9,24 +9,39 @@
 
 	<div id="graph"></div>
 
+	<h1 id="presetTitle">test preset title</h1>
+
 	<div id="controls">
 
-		<label>Colorize</label>
-		<select class="colorizeSelect">
-			<option value="team">Team</option>
-			<option value="location">Location</option>
-			<option value="role">Role</option>
-		</select><br><br>
+		<h4>Presets</h4>
+		<select class="presetSelect"></select>
 
-		<div id="filtersDiv">
-			<h4>Filters</h4>
+
+		<div id="customOptions" style="display:none;">
+			<hr>
+
+			<h4>Colors</h4>
+			<select class="colorizeSelect">
+				<option value="team">Team</option>
+				<option value="location">Location</option>
+				<option value="role">Role</option>
+			</select>
+
+			<hr>
+
+			<div id="filtersDiv">
+				<h4>Filters</h4>
+			</div>
+
+			<hr>
+
+			<ul id="ChaosButtons">
+				<h4>Chaos!</h4>
+				<li><button id="Jiggle">Jiggle</button></li>
+				<li><button id="Shake" data-power=".8">Shake</button></li>
+				<li><button id="Upheaval" data-power="3">Upheaval</button></li>
+			</ul>
 		</div>
-
-		<ul id="ChaosButtons">
-			<li><button id="Jiggle">Jiggle</button></li>
-			<li><button id="Shake" data-power=".8">Shake</button></li>
-			<li><button id="Upheaval" data-power="3">Upheaval</button></li>
-		</ul>
 
 		<button id="HitWithBus" data-power="3">Hit with a bus!</button>
 

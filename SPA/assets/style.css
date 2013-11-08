@@ -7,6 +7,11 @@ button {
 	margin-bottom: 5px;
 }
 
+hr {margin: 10px 0;}
+h4 {color: greenyellow; padding: 2px 0; margin: 5px 0;}
+
+#presetTitle { position: absolute; left: 225px; top: 20px; font-weight: normal; font-size: 2.5em; color: #888;}
+
 .node { stroke: #fff; stroke-width: 1px; cursor: pointer; }
 .link { stroke: #999; stroke-opacity: .4; }
 
@@ -21,11 +26,13 @@ button {
 #colorKey .colorKeyBlock { width: 10px; height: 10px; display: inline-block;}
 #colorKey .colorKeyValue { font-size: .8em; display: inline-block; padding: 2px;}
 
-#filtersDiv h4 {color: #CCC; border-bottom: solid white 1px; padding: 2px 0; margin: 5px 0;}
-
 #ChaosButtons {
 	list-style: none;
 }
+#ChaosButtons button, #HitWithBus{ padding: 2px; margin-bottom: 10px; border: solid #CCC 1px; background-color: #EEE; width: 100%; cursor: pointer; }
+#ChaosButtons button:hover{ background-color: white; }
+#HitWithBus {padding: 4px; background-color: greenyellow; font-weight: bold; border: solid greenyellow 1px;}
+#HitWithBus:hover { background-color: lime; }
 
 
 .tooltip{ position: absolute; background-color: white; border: solid #CCC 1px; border-radius: 4px; font-size: .6em; color: #666; padding: 5px; text-align: center; }

@@ -5,10 +5,18 @@ $(document).ready(function(){
 		addFilter(i);
 	}
 
-	$("#filtersDiv").on("change", ".filterSelect", updateWithEnergy(.8));
 
-	$("#Jiggle").on("click", updateWithEnergy(.2));
-	$("#Shake").on("click", updateWithEnergy(.8));
+	var presetSelect = $(".presetSelect");
+	presets.forEach(function(preset, i){
+		presetSelect.append("<option value='"+ i +"'>"+ preset.name +"</option>");
+	});
+	presetSelect.append("<option value=''>--Custom--</option>");
+	loadPreset("0");
+
+
+	$("#filtersDiv").on("change", ".filterSelect", updateWithEnergy(0.8));
+	$("#Jiggle").on("click", updateWithEnergy(0.2));
+	$("#Shake").on("click", updateWithEnergy(0.8));
 	$("#Upheaval").on("click", updateWithEnergy(2));
 
 	$("#HitWithBus").on("click", function () {
@@ -21,6 +29,10 @@ $(document).ready(function(){
 		});
 
 		if (heaviestNode) { removeNode(heaviestNode); }
+	});
+
+	$(".presetSelect").on("change", function(e){
+		loadPreset($(e.target).val());
 	});
 
 	NetworkRepository.CallWithNetworkData({}, initForceGraph);
@@ -38,7 +50,7 @@ var defaultOpts = {
 	nodeFilter: constant(true),
 	linkDistance: constant(60),
 	linkStrength: exponentialWeight,
-	strokeWidth: function (link) { return exponentialWeight(link) * 8 }
+	strokeWidth: function (link) { return exponentialWeight(link) * 8; }
 };
 
 function initForceGraph(err, graph){
@@ -62,7 +74,7 @@ var updateWithEnergy = function (energy) {
 		var colorizeBy = $(".colorizeSelect").val();
 		var nodeColor = function(node) {
 			return color( enumerations[colorizeBy].indexOf(node.person[colorizeBy].toString()));
-		}
+		};
 		updateColorKey(enumerations[colorizeBy]);
 
 		// update filters
@@ -80,7 +92,7 @@ var updateWithEnergy = function (energy) {
 				}
 			}
 
-			if (excludedUIDs.some(function (UID) { return UID === node.UID })) {
+			if (excludedUIDs.some(function (UID) { return UID === node.UID; })) {
 				return false;
 			}
 
@@ -95,7 +107,7 @@ var updateWithEnergy = function (energy) {
 
 		forceGraph.update(opts);
 	};
-}
+};
 
 
 // define some enumerators to map colors to keys
@@ -104,6 +116,22 @@ var enumerations = {
 	location: "Europe,APAC,North America".split(","),
 	team: "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17".split(",")
 };
+
+// ideally the user could setup a preset and save it to localStorage
+// or something, but for now theyre hardcoded
+var presets = [
+	{
+		name: "Role Distribution per Team",
+		config: {
+			"colorizeSelect": "",
+			filters: {
+				"role": "",
+				"location": "",
+				"team": ""
+			}
+		}
+	}
+];
 
 function updateColorKey(arr){
 	var html = ["<div>Color Key</div>"];
@@ -154,4 +182,17 @@ function removeNode(node){
 	excludedUIDs.push(node.__data__.UID);
 	clearTooltips();
 	updateWithEnergy(Math.pow(2, weightScale(node.__data__.weight / 3) * 3) / 4)();
+}
+
+function loadPreset(id){
+	var preset = presets[id];
+
+	if(!id){
+		$("#customOptions").show("fast");
+		$("#presetTitle").text("Custom");
+
+	} else {
+		$("#customOptions").hide("fast");		
+		$("#presetTitle").text(preset.name);
+	}
 }
