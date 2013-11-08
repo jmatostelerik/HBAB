@@ -12,11 +12,14 @@
 		var vertices = [];
 		vertices.byUID = {};
 		var edges = [];
+		var radiusFactor = 4;
 
-		pristineData.people.forEach(function (person) {
+		pristineData.people.forEach(function (person, index, people) {
 			var newVertex = {
 				UID: person.UID,
-				person: person		
+				person: person,
+				x: width / 2 + (width / radiusFactor) * Math.cos(2 * Math.PI * index / people.length),
+				y: height / 2 + (height / radiusFactor) * Math.sin(2 * Math.PI * index / people.length),
 			};
 
 			vertices.push(newVertex);
