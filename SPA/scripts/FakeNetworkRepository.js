@@ -72,8 +72,8 @@
 				if (rawPeople !== undefined && rawPeople.length !== undefined)
 				{
 					var avgLinksPerPerson = 1;
-					var numSuperStars = 4;
-					var starPower = 8;
+					var numSuperStars = 3;
+					var starPower = 15;
 
 					people = rawPeople.map(function (person) {
 						return {
