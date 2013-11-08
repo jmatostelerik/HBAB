@@ -17,12 +17,12 @@ h4 {color: greenyellow; padding: 2px 0; margin: 5px 0;}
 
 #controls { position: relative; width: 200px; height: 100%; padding: 10px; background-color: #555; z-index: 10; overflow: auto;}
 #controls label { display: block; font-size: .8em; color: #CCC; margin-bottom: 2px;}
-#controls select { padding: 2px; margin-bottom: 10px; border: solid #CCC 1px; background-color: #EEE; width: 100%;}
+#controls select, #nameInput { padding: 2px; margin-bottom: 10px; border: solid #CCC 1px; background-color: #EEE; width: 100%;}
 
 
 #graph {position: absolute; top: 0; left: 0;}
 
-#colorKey { position: absolute; top: 10px; right: 10px; }
+#colorKey { position: absolute; top: 10px; right: 10px; padding: 10px; border: solid #CCC 1px; }
 #colorKey .colorKeyBlock { width: 10px; height: 10px; display: inline-block;}
 #colorKey .colorKeyValue { font-size: .8em; display: inline-block; padding: 2px;}
 

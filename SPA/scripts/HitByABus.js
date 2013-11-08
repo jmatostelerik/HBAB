@@ -1,5 +1,6 @@
 $(document).ready(function(){
 	$(".colorizeSelect").on("change", updateWithEnergy(0));
+	$("#nameInput").on("keyup", updateWithEnergy(0));
 
 	for(var i in enumerations){
 		addFilter(i);
@@ -78,10 +79,28 @@ var updateWithEnergy = function (energy) {
 
 		// update colors
 		var colorizeBy = $(".colorizeSelect").val();
-		var nodeColor = function(node) {
-			return color( enumerations[colorizeBy].indexOf(node.person[colorizeBy].toString()));
-		};
-		updateColorKey(enumerations[colorizeBy]);
+		var nameFilter = $("#nameInput").val();
+
+		// if there is a name filter in place, colorize only that node
+		if(nameFilter){
+			var nodeColor = function(node) {
+				if(node.person.name === nameFilter){
+					return color(0);
+				} else {
+					return "#CCC";
+				}
+			};
+			updateColorKey([nameFilter]);
+
+		// otherwise, normal node colorization
+		} else {			
+			var nodeColor = function(node) {
+				return color( enumerations[colorizeBy].indexOf(node.person[colorizeBy].toString()));
+			};
+			updateColorKey(enumerations[colorizeBy]);
+		}
+		
+		
 
 		// update filters
 		var filterValues = {},
