@@ -1,12 +1,11 @@
 $(document).ready(function(){
-
-	$(".colorizeSelect").on("change", updateForceGraphOpts);
+	$(".colorizeSelect").on("change", updateWithEnergy(0));
 
 	for(var i in enumerations){
 		addFilter(i);
 	}
 
-	$("#filtersDiv").on("change", ".filterSelect", updateForceGraphOpts);
+	$("#filtersDiv").on("change", ".filterSelect", updateWithEnergy(1));
 
 	NetworkRepository.CallWithNetworkData({}, initForceGraph);
 });
@@ -23,16 +22,13 @@ var defaultOpts = {
 	nodeFilter: constant(true),
 	linkDistance: constant(60),
 	linkStrength: exponentialWeight,
-	strokeWidth: function (link) { return exponentialWeight(link) * 8 },
-	nodeColor: function(node) {
-		return color( roles.indexOf(node.person.role));
-	}
+	strokeWidth: function (link) { return exponentialWeight(link) * 8 }
 };
 
 function initForceGraph(err, graph){
 	var selector = "#graph";
 	window.forceGraph = newForceGraph(graph, selector, $(window).innerHeight(), $(window).innerWidth());
-	updateForceGraphOpts();
+	updateWithEnergy(2)();
 	$(selector).on("mouseenter mouseleave", ".node", function(e){
 		if(e.type === "mouseenter")	createTooltip(this);
 		else clearTooltips();
@@ -43,40 +39,48 @@ function initForceGraph(err, graph){
 }
 
 var excludedUIDs = [];
-function updateForceGraphOpts(){
-	var opts = $.extend({}, defaultOpts);
+var updateWithEnergy = function (energy) {
+	return function () {
 
-	// update colors
-	var colorizeBy = $(".colorizeSelect").val();
-	opts.nodeColor = function(node) {
-		return color( enumerations[colorizeBy].indexOf(node.person[colorizeBy].toString()));
-	}
-	updateColorKey(enumerations[colorizeBy]);
+		// update colors
+		var colorizeBy = $(".colorizeSelect").val();
+		var nodeColor = function(node) {
+			return color( enumerations[colorizeBy].indexOf(node.person[colorizeBy].toString()));
+		}
+		updateColorKey(enumerations[colorizeBy]);
 
-	// update filters
-	var filterValues = {},
-		filterSelects = $("#filtersDiv .filterSelect");
+		// update filters
+		var filterValues = {},
+			filterSelects = $("#filtersDiv .filterSelect");
 
-	filterSelects.each(function(i, el){
-		var $el = $(el);
-		filterValues[$el.attr("data-name")] = $el.val();
-	});
-	opts.nodeFilter = function (node){
-		for(var i in filterValues){
-			if(filterValues[i].indexOf(node.person[i].toString()) === -1){
+		filterSelects.each(function(i, el){
+			var $el = $(el);
+			filterValues[$el.attr("data-name")] = $el.val();
+		});
+		var nodeFilter = function (node){
+			for(var i in filterValues){
+				if(filterValues[i].indexOf(node.person[i].toString()) === -1){
+					return false;
+				}
+			}
+
+			if (excludedUIDs.some(function (UID) { return UID === node.UID })) {
 				return false;
 			}
-		}
 
-		if (excludedUIDs.some(function (UID) { return UID === node.UID })) {
-			return false;
-		}
+			return true;
+		};
 
-		return true;
-	},
+		var opts = $.extend(defaultOpts, {
+			energy: energy,
+			nodeColor: nodeColor,
+			nodeFilter: nodeFilter
+		});
 
-	forceGraph.update(opts);
+		forceGraph.update(opts);
+	};
 }
+
 
 // define some enumerators to map colors to keys
 var enumerations = {
@@ -133,5 +137,5 @@ function clearTooltips(){
 function removeNode(node){
 	excludedUIDs.push(node.__data__.UID);
 	clearTooltips();
-	updateForceGraphOpts();
+	updateWithEnergy(Math.pow(2, weightScale(node.__data__.weight / 3) * 3) / 4)();
 }

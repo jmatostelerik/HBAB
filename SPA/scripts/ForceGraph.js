@@ -84,7 +84,13 @@
 					.charge(funcOrZeroIfNot(options.charge, options.nodeFilter))
 					.linkStrength(funcOrZeroIfNot(options.linkStrength, edgeIsIncluded))
 					.linkDistance(options.linkDistance)
-					.start();
+					.friction(.95);
+
+				if (options.energy !== 0) {
+					forceWeb
+						.start()
+						.alpha(options.energy);
+				}
 			}
 		}
 	}
