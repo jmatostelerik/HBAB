@@ -34,7 +34,7 @@
 			return 1;
 		}
 
-		return ((Math.log(size) / Math.log(4) ) / (Math.pow(size, 2) / 16));
+		return ((Math.log(size) / Math.log(7) ) / (Math.pow(size, 2) / 49));
 	};
 
 	var newLink = function (list) {
@@ -79,8 +79,8 @@
 
 				if (rawPeople !== undefined && rawPeople.length !== undefined)
 				{
-					var numSuperStars = 6;
-					var starPower = 25;
+					var numSuperStars = 3;
+					var starPower = 50;
 
 					people = rawPeople.map(function (person) {
 						return {
@@ -116,11 +116,18 @@
 						var starIndex = random.intUpTo(numPeople);
 						for (var j = 0; j < starPower; j++)
 						{
-							links.push(newPeopleLink({
+							var link = newPeopleLink({
 								sourceIndex: starIndex,
 								targetIndex: random.intUpToNexceptFor(numPeople, starIndex),
-								weight: random.intUpTo(8)
-							}));
+							});
+
+							while (link.otherWeight < 1) {
+								link = newPeopleLink({
+									sourceIndex: starIndex,
+									targetIndex: random.intUpToNexceptFor(numPeople, starIndex),
+								});
+							}
+							links.push(link);
 						}
 					}
 				}
