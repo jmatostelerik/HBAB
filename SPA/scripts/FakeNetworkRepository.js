@@ -71,7 +71,7 @@
 
 				if (rawPeople !== undefined && rawPeople.length !== undefined)
 				{
-					var avgLinksPerPerson = 1;
+					var avgLinksPerPerson = 2;
 					var numSuperStars = 4;
 					var starPower = 8;
 
