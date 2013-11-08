@@ -48,7 +48,13 @@
 					.attr("height", height)
 					.attr("pointer-events", "all")
 					.append('svg:g')
-					.call(d3.behavior.zoom().on("zoom", redraw));
+					.call(d3.behavior.zoom().on("zoom", redraw))
+
+		svg.append('svg:rect')
+			.attr('width', width)
+			.attr('height', height)
+			.attr('fill', 'white');
+
 		var domVertices = function () { return svg.selectAll(".node"); };
 		var domEdges = function () { return svg.selectAll(".link"); };
 
