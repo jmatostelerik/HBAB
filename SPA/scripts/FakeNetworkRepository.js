@@ -15,21 +15,28 @@
 			}
 
 			return result;
-		},
-
-		from: function (list) {
-			return list[intUpTo(list.length)];
 		}
+	}
+
+	var newLink = function (list) {
+		return function (indexLink) {
+			return {
+				UID: nextID(),
+				sourceUID: list[indexLink.sourceIndex].UID,
+				targetUID: list[indexLink.targetIndex].UID,
+				weight: indexLink.weight
+			}
+		};
 	}
 
 	var nonDegenerateLink = function (list) {
 		var sourceIndex = random.intUpTo(list.length);
 
-		return {
-			sourceUID: list[sourceIndex].UID,
-			targetUID: list[random.intUpToNexceptFor(list.length, sourceIndex)].UID,
+		return newLink(list)({
+			sourceIndex: sourceIndex,
+			targetIndex: random.intUpToNexceptFor(list.length, sourceIndex),
 			weight: (random.intUpTo(3) + random.intUpTo(4))
-		};
+		});
 	};
 
 	window.NetworkRepository = {
@@ -56,6 +63,7 @@
 					});
 
 					var numPeople = people.length;
+					var newPeopleLink = newLink(people);
 
 					for (var i = numPeople * avgLinksPerPerson; i > 0; i--) {
 						links.push(nonDegenerateLink(people));
@@ -65,11 +73,13 @@
 						for (var toIndex = fromIndex + 1; toIndex < numPeople; toIndex++) {
 							if (people[fromIndex].team === people[toIndex].team)
 							{
-								links.push({
-									sourceUID: people[fromIndex].UID,
-									targetUID: people[toIndex].UID,
-									weight: 2
-								})
+								links.push(
+									newPeopleLink({
+										sourceIndex: fromIndex,
+										targetIndex: toIndex,
+										weight: 2
+									})
+								)
 							}
 						}
 					}
@@ -79,16 +89,14 @@
 						var starIndex = random.intUpTo(numPeople);
 						for (var j = 0; j < starPower; j++)
 						{
-							links.push({
-								sourceUID: people[starIndex].UID,
-								targetUID: people[random.intUpToNexceptFor(numPeople, starIndex)].UID,
+							links.push(newPeopleLink({
+								sourceIndex: starIndex,
+								targetIndex: random.intUpToNexceptFor(numPeople, starIndex),
 								weight: random.intUpTo(8)
-							})
+							}));
 						}
 					}
 				}
-
-				links.forEach(function (link) { link.UID = nextID(); });
 
 				callback(error, { people: people, relationships: links });
 			});
